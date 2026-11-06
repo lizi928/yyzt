@@ -4,6 +4,7 @@ import { downloadMarkdown as saveMarkdown } from '../utils/exportMarkdown'
 import { dayDate, parseDateOnly } from '../utils/date'
 import { routeModeColor, routeModeLabel } from '../utils/routeModes'
 import { readHotelMeta, readTripMeta, writeTripMeta } from '../utils/storage'
+import { useFoodPhotos } from './useFoodPhotos'
 import { useHotels } from './useHotels'
 import { useMapMedia } from './useMapMedia'
 import { useRestaurants } from './useRestaurants'
@@ -30,6 +31,7 @@ export function useTripResult({ token, getUser, activeId, navigate, showToast })
   const media = useMapMedia(token)
   const hotels = useHotels(token, { getPlan: () => plan.value })
   const restaurants = useRestaurants(token, { getActiveId: () => activeId.value })
+  const foodPhotos = useFoodPhotos(token, { getActiveId: () => activeId.value })
   const routes = useRoutes(token, {
     getPlan: () => plan.value,
     getActiveId: () => activeId.value,
@@ -196,8 +198,8 @@ export function useTripResult({ token, getUser, activeId, navigate, showToast })
       { id: 'itinerary', label: '每日行程', icon: 'calendar' },
       { id: 'attractions', label: '景点推荐', icon: 'star' },
       { id: 'hotels', label: '住宿建议', icon: 'hotel' },
-      { id: 'transport', label: '交通方案', icon: 'train' },
       { id: 'routes', label: '按天路线', icon: 'route' },
+      { id: 'transport', label: '交通方案', icon: 'train' },
       { id: 'budget', label: '预算速览', icon: 'wallet' },
       { id: 'tips', label: '旅行提示', icon: 'sparkle' },
       { id: 'sources', label: '参考资料', icon: 'book' },
@@ -264,6 +266,7 @@ export function useTripResult({ token, getUser, activeId, navigate, showToast })
     showAnswer.value = false
     routes.clearRoutes()
     restaurants.clear()
+    foodPhotos.clear()
     routes.restoreHotelMeta(conversationId)
 
     try {
@@ -332,6 +335,7 @@ export function useTripResult({ token, getUser, activeId, navigate, showToast })
     media.clear()
     hotels.clear()
     restaurants.clear()
+    foodPhotos.clear()
     routes.clearRoutes()
     routes.resetHotelInputs()
   }
@@ -508,6 +512,7 @@ export function useTripResult({ token, getUser, activeId, navigate, showToast })
     media,
     hotels,
     restaurants,
+    foodPhotos,
     routes,
     loadPlan,
     openConversation,

@@ -9,11 +9,22 @@ defineProps({
 })
 
 function transportIcon(mode) {
-  const key = String(mode || '')
-  if (key.includes('plane') || key.includes('flight')) return 'plane'
-  if (key.includes('self_drive') || key.includes('car')) return 'car'
+  const key = String(mode || '').toLowerCase()
+  if (key.includes('airport')) return 'train'
+  if (key.includes('plane') || key.includes('flight') || key.includes('air')) return 'plane'
   if (key.includes('bus') || key.includes('coach')) return 'bus'
-  if (key.includes('train') || key.includes('rail')) return 'train'
+  if (key.includes('train') || key.includes('rail') || key.includes('metro') || key.includes('subway')) {
+    return 'train'
+  }
+  if (
+    key.includes('self') ||
+    key.includes('drive') ||
+    key.includes('car') ||
+    key.includes('taxi') ||
+    key.includes('cab')
+  ) {
+    return 'car'
+  }
   return 'route'
 }
 </script>

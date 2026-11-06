@@ -2,6 +2,7 @@
 import { nextTick, ref, watch } from 'vue'
 import AppButton from '../ui/AppButton.vue'
 import EmptyState from '../ui/EmptyState.vue'
+import FoodPhoto from './FoodPhoto.vue'
 import GalleryRail from '../ui/GalleryRail.vue'
 import Icon from '../ui/Icon.vue'
 import SectionHeader from '../ui/SectionHeader.vue'
@@ -18,9 +19,12 @@ const props = defineProps({
   isTarget: { type: Function, required: true },
   buttonLabel: { type: Function, required: true },
   photoFailed: { type: Function, required: true },
+  foodPhotoFor: { type: Function, required: true },
+  foodPhotoLoading: { type: Function, required: true },
+  foodPhotoFailed: { type: Function, required: true },
 })
 
-const emit = defineEmits(['toggle', 'close', 'photo-error'])
+const emit = defineEmits(['toggle', 'close', 'photo-error', 'load-photo'])
 const panel = ref(null)
 
 watch(
@@ -52,29 +56,39 @@ watch(
       class="food-rail"
     >
       <article v-for="item in plan.foods" :key="item.name" class="food-card">
-        <header class="food-card__head">
-          <div class="food-card__title">
-            <span class="food-card__mark" aria-hidden="true"></span>
-            <h3>{{ item.name }}</h3>
+        <FoodPhoto
+          :item="item"
+          :photo="foodPhotoFor(item)"
+          :loading="foodPhotoLoading(item)"
+          :failed="foodPhotoFailed(item)"
+          @load="emit('load-photo', $event)"
+        />
+
+        <div class="food-card__body">
+          <header class="food-card__head">
+            <div class="food-card__title">
+              <span class="food-card__mark" aria-hidden="true"></span>
+              <h3>{{ item.name }}</h3>
+            </div>
+          </header>
+
+          <p class="food-card__area mono">{{ item.area || '目的地' }}</p>
+
+          <div class="food-card__tags">
+            <Tag v-if="item.category">{{ item.category }}</Tag>
+            <Tag v-if="item.meal_time">{{ item.meal_time }}</Tag>
           </div>
-        </header>
 
-        <p class="food-card__area mono">{{ item.area || '目的地' }}</p>
+          <p v-if="item.price_range" class="food-card__meta">
+            参考 {{ item.price_range }}
+          </p>
+          <p class="food-card__reason">{{ item.reason || '暂无推荐理由' }}</p>
 
-        <div class="food-card__tags">
-          <Tag v-if="item.category">{{ item.category }}</Tag>
-          <Tag v-if="item.meal_time">{{ item.meal_time }}</Tag>
+          <button class="food-card__action food__action" type="button" @click="emit('toggle', item)">
+            {{ buttonLabel(item) }}
+            <Icon name="utensils" :size="13" />
+          </button>
         </div>
-
-        <p v-if="item.price_range" class="food-card__meta">
-          参考 {{ item.price_range }}
-        </p>
-        <p class="food-card__reason">{{ item.reason || '暂无推荐理由' }}</p>
-
-        <button class="food-card__action food__action" type="button" @click="emit('toggle', item)">
-          {{ buttonLabel(item) }}
-          <Icon name="utensils" :size="13" />
-        </button>
       </article>
     </GalleryRail>
     <p v-else-if="plan.food_note" class="note">{{ plan.food_note }}</p>
@@ -169,7 +183,7 @@ watch(
   flex: 0 0 clamp(250px, 34%, 286px);
   flex-direction: column;
   min-width: 0;
-  padding: 14px;
+  overflow: hidden;
   background: var(--paper-raised);
   border: 1px solid var(--rule);
   border-radius: var(--radius-sm);
@@ -177,6 +191,13 @@ watch(
   transition:
     border-color var(--dur-2) var(--ease-out),
     transform var(--dur-2) var(--ease-out);
+}
+
+.food-card__body {
+  display: flex;
+  flex: 1;
+  flex-direction: column;
+  padding: 14px;
 }
 
 .food-card__head {

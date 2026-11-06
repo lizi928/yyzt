@@ -147,9 +147,13 @@ async function onSelectHotel(place) {
             :is-target="trip.restaurants.isTarget"
             :button-label="trip.restaurants.buttonLabel"
             :photo-failed="trip.restaurants.photoFailed"
+            :food-photo-for="trip.foodPhotos.photoFor"
+            :food-photo-loading="trip.foodPhotos.isLoading"
+            :food-photo-failed="trip.foodPhotos.hasFailed"
             @toggle="trip.restaurants.toggle($event)"
             @close="trip.restaurants.clear()"
             @photo-error="trip.restaurants.onPhotoError"
+            @load-photo="trip.foodPhotos.load($event)"
           />
         </div>
 
@@ -167,10 +171,6 @@ async function onSelectHotel(place) {
             :on-photo-error="trip.hotels.onPhotoError"
             @select-hotel="onSelectHotel"
           />
-        </div>
-
-        <div class="dash-cell dash-cell--transport">
-          <TransportSection :transport="trip.plan.transport" />
         </div>
 
         <div class="dash-cell dash-cell--routes">
@@ -191,6 +191,10 @@ async function onSelectHotel(place) {
             @select-day="trip.routes.selectRouteDay($event)"
             @scroll-map="scrollToId('map')"
           />
+        </div>
+
+        <div class="dash-cell dash-cell--transport">
+          <TransportSection :transport="trip.plan.transport" />
         </div>
 
         <div class="dash-cell dash-cell--budget">
