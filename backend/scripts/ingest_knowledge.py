@@ -87,6 +87,12 @@ from app.rag import sparse  # noqa: E402
 from app.rag import vector_store as vs  # noqa: E402
 from app.rag.tokenize import tokenize  # noqa: E402
 
+# Windows 控制台默认 cp936，打印 ❌/✅ 这类字符会直接 UnicodeEncodeError。
+# 用 replace 兜底，避免因为一行日志中断整个入库流程。
+for _stream in (sys.stdout, sys.stderr):
+    if hasattr(_stream, "reconfigure"):
+        _stream.reconfigure(errors="replace")
+
 # 一次编码多少块。
 #
 # 16 是折中：太小会浪费批处理的前后处理开销，太大会在显存不足时直接 OOM。
@@ -106,8 +112,7 @@ def main() -> int:
     # 它的用途正是"还没配好环境时先看看切块效果"，
     # 所以它不能连库、不能加载模型。
     if args.dry_run:
-        _dry_run(files)
-        return 0
+        return _dry_run(files)
 
     if not _preflight():
         return 1
@@ -478,7 +483,7 @@ def _reject_volatile(path: Path, meta: dict) -> None:
     )
 
 
-def _dry_run(files: list[Path]) -> None:
+def _dry_run(files: list[Path]) -> int:
     """只解析和切块，打印统计。不连库、不加载模型。"""
     total = 0
     lens: list[int] = []
@@ -524,6 +529,9 @@ def _dry_run(files: list[Path]) -> None:
         print()
         print("（缺 city / doc_type 的文件会走到这里。那两个字段是过滤的依据，")
         print("  缺了会让这篇文档在带过滤的查询里静默消失，所以不猜、直接报错。）")
+        return 1
+
+    return 0
 
 
 def _ingest(files: list[Path], engine, args: argparse.Namespace) -> int:

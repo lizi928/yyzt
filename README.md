@@ -209,7 +209,7 @@ JWT_SECRET_KEY=<a-long-random-string>
 python -m alembic upgrade head
 ```
 
-导入知识库（没有语料时可跳过；公开仓库只带 `knowledge/sample-guide.md`）：
+导入知识库（没有语料时可跳过；公开仓库只带 `knowledge/sample-guide.md`，格式与导入说明见 [docs/KNOWLEDGE.md](docs/KNOWLEDGE.md)）：
 
 ```bash
 python scripts/ingest_knowledge.py --dry-run

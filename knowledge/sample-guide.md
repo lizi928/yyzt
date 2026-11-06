@@ -1,8 +1,8 @@
 ---
 title: 示例：城市旅行规划通用清单
-city: ""
-doc_type: 指南
-source: ""
+city: 通用
+doc_type: 攻略
+source: https://github.com/lizi928/yyzt
 tags: [示例, 行前准备, 行程节奏]
 ---
 

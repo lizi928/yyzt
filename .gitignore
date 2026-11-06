@@ -37,9 +37,8 @@ htmlcov/
 backend/backups/
 *.dump
 
-# 第三方语料不随公开仓库分发；只保留自写示例和导入说明
+# 第三方语料不随公开仓库分发；只保留自写示例
 knowledge/*.md
-!knowledge/README.md
 !knowledge/sample-guide.md
 
 # 评估过程产物；只保留脱敏后的文档
